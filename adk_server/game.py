@@ -66,10 +66,10 @@ class AdkGame:
     def _move_snakes(self):
         for pi, (player, (px, py), pr, p_alive) in enumerate(zip(self.players, self._player_pos, self._player_dir, self._player_alive)):
             if player.send_turn:
-                player.send_turn(np.abs(self._state), px, py, pr)
+                player.send_turn(self._state.copy(), px, py, pr)
             if not p_alive:
                 continue
-            answer = player.get_turn(np.abs(self._state), px, py, pr)
+            answer = player.get_turn(self._state.copy(), px, py, pr)
             if answer == -1:
                 pr -= self.opts.turn_speed / self.opts.tps
             elif answer == 1:

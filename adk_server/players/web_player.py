@@ -13,13 +13,15 @@ class WebPlayer(AdkPlayer):
     
     def _webthread(self):
         while not self.ws.closed:
-            self._dir = int(self.ws.receive())
+            d = self.ws.receive()
+            if d is None: return
+            self._dir = int(d)
 
     def init(self, opts: AdkGameOptions):
         self.ws.send(b's' + json.dumps(opts.__dict__).encode())
     
     def send_turn(self, game_state: np.ndarray, x: float, y: float, dir: float):
-        self.ws.send(b'b' + game_state.tobytes())
+        self.ws.send(b'b' + np.abs(game_state).tobytes())
 
     def get_turn(self, game_state: np.ndarray, x: float, y: float, dir: float) -> int:
         return self._dir
