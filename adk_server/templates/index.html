@@ -3,9 +3,8 @@
 
 <head>
    <meta charset="UTF-8">
-   <title>SocketIO example</title>
+   <title>ADK Wars</title>
    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
    <script type="text/javascript">
       const COLORS = [
          [255, 255, 255, 0],
@@ -13,22 +12,21 @@
          [128, 255, 128, 255],
          [100, 100, 255, 255]
       ]
-      
+
       const KEYCODE_LEFT = 37;
       const KEYCODE_RIGHT = 39;
-      
+
       const DIR_LEFT = '1';
       const DIR_RIGHT = '-1';
       const DIR_FORWARD = '0';
-      
+
       let sock = null;
-      
+
       let isLeft = false;
       let isRight = false;
-      
+
       $(document).keydown((e) => {
          if (e.keyCode === KEYCODE_LEFT) {
-            console.log('sending -1');
             sock.send(DIR_LEFT);
             isLeft = true;
          } else if (e.keyCode === KEYCODE_RIGHT) {
@@ -36,14 +34,14 @@
             isRight = true;
          }
       })
-      
+
       $(document).keyup((e) => {
          if (e.keyCode === KEYCODE_LEFT) {
             isLeft = false;
          } else if (e.keyCode === KEYCODE_RIGHT) {
             isRight = false;
          }
-         
+
          if (isLeft) {
             sock.send(DIR_LEFT);
          } else if (isRight) {
@@ -77,9 +75,9 @@
                      imgData.data.set(COLORS[bytes[j * height + i]], ((height - i - 1) * width + j) * 4);
                   }
                }
-               
+
                // console.log(imgData)
-               
+
                ctx.putImageData(imgData, 0, 0);
 
             } else if (mt == "s") {
