@@ -1,7 +1,7 @@
 from ..game import AdkGameOptions, AdkPlayer
 
 class WallAvoidingPlayerr(AdkPlayer):
-    def init(self, opts: AdkGameOptions):
+    def init(self, player_id, opts: AdkGameOptions):
         self.w = opts.width
         self.h = opts.height
         self.turn_radius = opts.player_speed * (90 / opts.turn_speed) * 0.84

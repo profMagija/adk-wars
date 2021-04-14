@@ -17,7 +17,7 @@ class WebPlayer(AdkPlayer):
             if d is None: return
             self._dir = int(d)
 
-    def init(self, opts: AdkGameOptions):
+    def init(self, player_id, opts: AdkGameOptions):
         self.ws.send(b's' + json.dumps(opts.__dict__).encode())
     
     def send_turn(self, game_state: np.ndarray, x: float, y: float, dir: float):

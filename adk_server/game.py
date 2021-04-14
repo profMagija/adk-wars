@@ -19,7 +19,7 @@ class AdkGameOptions:
 
 
 class AdkPlayer:
-    def init(self, opts: AdkGameOptions):
+    def init(self, player_id: int, opts: AdkGameOptions):
         pass
 
     send_turn = None
@@ -43,8 +43,8 @@ class AdkGame:
         # self._player_dir = [90 for _ in self.players]
         self._player_dir = [random.uniform(0, 360) for _ in self.players]
 
-        for p in self.players:
-            p.init(AdkGameOptions(**dataclasses.asdict(opts)))
+        for i, p in enumerate(self.players):
+            p.init(i+1, AdkGameOptions(**dataclasses.asdict(opts)))
 
     def _draw_snakes(self):
         R = self.opts.snake_radius
