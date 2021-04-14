@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>SocketIO example</title>
+   <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+   <script type="text/javascript">
+      const COLORS = [
+         [255, 255, 255, 0],
+         [255, 128, 128, 255],
+         [128, 255, 128, 255],
+         [100, 100, 255, 255]
+      ]
+      
+      const KEYCODE_LEFT = 37;
+      const KEYCODE_RIGHT = 39;
+      
+      const DIR_LEFT = '1';
+      const DIR_RIGHT = '-1';
+      const DIR_FORWARD = '0';
+      
+      let sock = null;
+      
+      let isLeft = false;
+      let isRight = false;
+      
+      $(document).keydown((e) => {
+         if (e.keyCode === KEYCODE_LEFT) {
+            console.log('sending -1');
+            sock.send(DIR_LEFT);
+            isLeft = true;
+         } else if (e.keyCode === KEYCODE_RIGHT) {
+            sock.send(DIR_RIGHT);
+            isRight = true;
+         }
+      })
+      
+      $(document).keyup((e) => {
+         if (e.keyCode === KEYCODE_LEFT) {
+            isLeft = false;
+         } else if (e.keyCode === KEYCODE_RIGHT) {
+            isRight = false;
+         }
+         
+         if (isLeft) {
+            sock.send(DIR_LEFT);
+         } else if (isRight) {
+            sock.send(DIR_RIGHT);
+         } else {
+            sock.send(DIR_FORWARD);
+         }
+      })
+
+      $(document).ready(function () {
+         sock = new WebSocket(`ws://${window.location.host}/adk`);
+
+         const CANVAS = document.getElementById('game');
+
+         sock.onmessage = async (ev) => {
+            const mt = await ev.data.slice(0, 1).text();
+            if (mt == "b") {
+               // board state
+               // console.log('board', ev.data.slice(1));
+
+               const ctx = CANVAS.getContext('2d');
+
+               const { width, height } = CANVAS;
+
+               const imgData = ctx.createImageData(width, height);
+
+               const bytes = new Uint8Array(await ev.data.slice(1).arrayBuffer());
+
+               for (var i = 0; i < height; i++) {
+                  for (var j = 0; j < width; j++) {
+                     imgData.data.set(COLORS[bytes[j * height + i]], ((height - i - 1) * width + j) * 4);
+                  }
+               }
+               
+               // console.log(imgData)
+               
+               ctx.putImageData(imgData, 0, 0);
+
+            } else if (mt == "s") {
+               // game start
+               const data_text = await ev.data.slice(1).text();
+               const data = JSON.parse(data_text);
+
+               CANVAS.width = data.width;
+               CANVAS.height = data.height;
+            }
+         }
+      });
+   </script>
+   <style>
+      canvas {
+         border: 1px solid black;
+      }
+   </style>
+</head>
+
+<body>
+   <canvas id="game"></canvas>
+</body>
+
+</html>
